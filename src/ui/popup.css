@@ -1,0 +1,83 @@
+.popup-page {
+  width: 320px;
+}
+
+.popup-shell {
+  padding: 18px;
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-row h1 {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.status-dot.paused {
+  background: var(--paused);
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin: 18px 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--border);
+}
+
+.metric {
+  display: flex;
+  min-height: 82px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 13px;
+  background: var(--surface);
+}
+
+.metric .label {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.metric strong {
+  font-size: 26px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 560;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.primary.paused {
+  background: var(--paused);
+  color: var(--text);
+}
+
+.secondary {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+}
+
+.secondary:hover {
+  background: var(--surface);
+}

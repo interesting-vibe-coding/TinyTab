@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TinyTab</title>
+    <link rel="stylesheet" href="base.css" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body class="popup-page">
+    <main class="popup-shell">
+      <header class="brand-row">
+        <img src="icons/icon-32.png" width="24" height="24" alt="" />
+        <h1>TinyTab</h1>
+        <span id="status" class="status-dot" aria-label="Running"></span>
+      </header>
+
+      <section class="metrics" aria-label="Tab statistics">
+        <div class="metric">
+          <span class="label">Open Tabs</span>
+          <strong id="open-tabs">—</strong>
+        </div>
+        <div class="metric">
+          <span class="label">Closed Today</span>
+          <strong id="closed-today">—</strong>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button id="pause" class="primary" type="button">Pause</button>
+        <button id="settings" class="secondary" type="button">Settings</button>
+      </div>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

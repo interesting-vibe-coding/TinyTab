@@ -11,6 +11,7 @@ function tab(overrides: Partial<TabSnapshot> = {}): TabSnapshot {
   return {
     id: 7,
     url: "https://example.com",
+    lastAccessed: EXPIRED,
     active: false,
     pinned: false,
     audible: false,
@@ -19,12 +20,10 @@ function tab(overrides: Partial<TabSnapshot> = {}): TabSnapshot {
   };
 }
 
-function activity(
-  overrides: Partial<ActivitySnapshot> = {},
-): ActivitySnapshot {
+function activity(overrides: Partial<ActivitySnapshot> = {}): ActivitySnapshot {
   return {
     lastInteractionAt: EXPIRED,
-    lastNetworkAt: 0,
+    lastPageActivityAt: 0,
     mediaPlaying: false,
     dirtyForm: false,
     observedAt: NOW,
@@ -34,9 +33,10 @@ function activity(
 
 describe("decideTabClose", () => {
   it("closes a genuinely idle expired tab", () => {
-    expect(
-      decideTabClose(tab(), activity(), DEFAULT_SETTINGS, NOW),
-    ).toEqual({ close: true, reason: "expired" });
+    expect(decideTabClose(tab(), activity(), DEFAULT_SETTINGS, NOW)).toEqual({
+      close: true,
+      reason: "expired",
+    });
   });
 
   it("keeps a tab at the timeout boundary", () => {
@@ -50,6 +50,17 @@ describe("decideTabClose", () => {
     ).toBe(false);
   });
 
+  it("uses browser lastAccessed when it is newer than content activity", () => {
+    expect(
+      decideTabClose(
+        tab({ lastAccessed: NOW - 5_000 }),
+        activity(),
+        DEFAULT_SETTINGS,
+        NOW,
+      ),
+    ).toEqual({ close: false, reason: "not-expired" });
+  });
+
   it.each([
     [tab({ active: true }), activity(), "active"],
     [tab({ pinned: true }), activity(), "pinned"],
@@ -61,8 +72,8 @@ describe("decideTabClose", () => {
     [tab(), activity({ dirtyForm: true }), "dirty-form"],
     [
       tab(),
-      activity({ lastNetworkAt: NOW - 10_000 }),
-      "recent-network-activity",
+      activity({ lastPageActivityAt: NOW - 10_000 }),
+      "recent-page-activity",
     ],
   ] as const)("protects %s because %s", (candidate, signal, expected) => {
     expect(

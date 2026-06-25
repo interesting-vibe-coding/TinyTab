@@ -13,6 +13,7 @@
 ### Task 1: Project skeleton and contracts
 
 **Files:**
+
 - Create: `package.json`
 - Create: `tsconfig.json`
 - Create: `vitest.config.ts`
@@ -31,6 +32,7 @@
 ### Task 2: Pure close-decision engine
 
 **Files:**
+
 - Create: `src/shared/url-policy.ts`
 - Create: `src/shared/whitelist.ts`
 - Create: `src/background/close-decision.ts`
@@ -47,6 +49,7 @@
 ### Task 3: Storage, badge, and Chrome API boundary
 
 **Files:**
+
 - Create: `src/shared/chrome-api.ts`
 - Create: `src/background/settings-store.ts`
 - Create: `src/background/activity-store.ts`
@@ -64,6 +67,7 @@
 ### Task 4: Smart Close activity observer
 
 **Files:**
+
 - Create: `src/content/activity-observer.ts`
 - Create: `src/content/index.ts`
 - Create: `src/shared/messages.ts`
@@ -78,6 +82,7 @@
 ### Task 5: Scanner and service worker
 
 **Files:**
+
 - Create: `src/background/scanner.ts`
 - Create: `src/background/service-worker.ts`
 - Test: `tests/background/scanner.test.ts`
@@ -91,6 +96,7 @@
 ### Task 6: Popup, options, manifest, and assets
 
 **Files:**
+
 - Create: `public/manifest.json`
 - Create: `public/popup.html`
 - Create: `public/options.html`
@@ -114,6 +120,7 @@
 ### Task 7: OSS release surface
 
 **Files:**
+
 - Create: `README.md`
 - Create: `README.zh.md`
 - Create: `PRIVACY.md`

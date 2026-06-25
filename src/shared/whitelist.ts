@@ -28,7 +28,10 @@ export function normalizeWhitelistEntry(entry: string): string {
 }
 
 /** Returns whether a URL host matches one normalized whitelist rule. */
-export function isWhitelisted(url: string, whitelist: readonly string[]): boolean {
+export function isWhitelisted(
+  url: string,
+  whitelist: readonly string[],
+): boolean {
   let hostname: string;
   try {
     hostname = new URL(url).hostname.toLowerCase();
@@ -44,7 +47,7 @@ export function isWhitelisted(url: string, whitelist: readonly string[]): boolea
 
     if (rule.startsWith("*.")) {
       const parent = rule.slice(2);
-      return hostname.endsWith(`.${parent}`);
+      return hostname === parent || hostname.endsWith(`.${parent}`);
     }
 
     return hostname === rule;

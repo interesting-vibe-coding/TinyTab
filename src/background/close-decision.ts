@@ -7,7 +7,7 @@ import type {
 } from "../shared/types";
 import { isWhitelisted } from "../shared/whitelist";
 
-const RECENT_NETWORK_GRACE_MS = 60_000;
+const RECENT_PAGE_ACTIVITY_GRACE_MS = 60_000;
 
 /** Determines whether TinyTab may close one tab at a specific instant. */
 export function decideTabClose(
@@ -28,16 +28,20 @@ export function decideTabClose(
   if (tab.url && isWhitelisted(tab.url, settings.whitelist))
     return { close: false, reason: "whitelisted" };
 
-  const idleMs = now - activity.lastInteractionAt;
+  const lastActivityAt = Math.max(
+    activity.lastInteractionAt,
+    tab.lastAccessed ?? 0,
+  );
+  const idleMs = now - lastActivityAt;
   if (idleMs <= settings.timeoutMinutes * 60_000)
     return { close: false, reason: "not-expired" };
 
   if (settings.smartClose) {
-    if (activity.mediaPlaying)
-      return { close: false, reason: "media-playing" };
+    if (activity.mediaPlaying) return { close: false, reason: "media-playing" };
     if (activity.dirtyForm) return { close: false, reason: "dirty-form" };
-    if (now - activity.lastNetworkAt <= RECENT_NETWORK_GRACE_MS)
-      return { close: false, reason: "recent-network-activity" };
+    if (now - activity.lastPageActivityAt <= RECENT_PAGE_ACTIVITY_GRACE_MS) {
+      return { close: false, reason: "recent-page-activity" };
+    }
   }
 
   return { close: true, reason: "expired" };

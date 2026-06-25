@@ -11,7 +11,7 @@ export interface Settings {
 /** Coarse page signals used by Smart Close. */
 export interface ActivitySnapshot {
   lastInteractionAt: number;
-  lastNetworkAt: number;
+  lastPageActivityAt: number;
   mediaPlaying: boolean;
   dirtyForm: boolean;
   observedAt: number;
@@ -21,10 +21,17 @@ export interface ActivitySnapshot {
 export interface TabSnapshot {
   id: number;
   url?: string;
+  lastAccessed?: number;
   active: boolean;
   pinned: boolean;
   audible: boolean;
   status?: "unloaded" | "loading" | "complete";
+}
+
+/** Persistent count displayed in the toolbar badge. */
+export interface DailyCounter {
+  date: string;
+  count: number;
 }
 
 /** Stable explanation emitted by the close-decision engine. */
@@ -39,7 +46,7 @@ export type CloseReason =
   | "not-expired"
   | "media-playing"
   | "dirty-form"
-  | "recent-network-activity"
+  | "recent-page-activity"
   | "expired";
 
 /** Deterministic close outcome and its explanation. */

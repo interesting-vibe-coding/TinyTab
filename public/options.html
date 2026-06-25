@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TinyTab Settings</title>
+    <link rel="stylesheet" href="base.css" />
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body class="options-page">
+    <main class="options-shell">
+      <header class="options-header">
+        <img src="icons/icon-48.png" width="40" height="40" alt="" />
+        <div>
+          <h1>TinyTab</h1>
+          <p>Quiet tab cleanup. Nothing else.</p>
+        </div>
+      </header>
+
+      <form id="settings-form">
+        <section class="settings-group">
+          <label for="timeout">Auto Close After</label>
+          <div class="number-field">
+            <input
+              id="timeout"
+              name="timeout"
+              type="number"
+              min="1"
+              max="10080"
+              required
+            />
+            <span>minutes</span>
+          </div>
+        </section>
+
+        <section class="settings-group">
+          <label for="whitelist">Whitelist</label>
+          <textarea
+            id="whitelist"
+            name="whitelist"
+            rows="7"
+            spellcheck="false"
+            placeholder="chatgpt.com&#10;claude.ai&#10;*.github.com&#10;localhost"
+          ></textarea>
+          <p class="hint">One domain per line. Wildcards match subdomains.</p>
+        </section>
+
+        <section class="settings-group toggles">
+          <label class="toggle-row">
+            <span>
+              <strong>Smart Close</strong>
+              <small
+                >Protect active pages, media, edits, and recent page
+                activity.</small
+              >
+            </span>
+            <input id="smart-close" type="checkbox" />
+          </label>
+          <label class="toggle-row">
+            <span><strong>Skip active tabs</strong></span>
+            <input id="skip-active" type="checkbox" />
+          </label>
+          <label class="toggle-row">
+            <span><strong>Skip pinned tabs</strong></span>
+            <input id="skip-pinned" type="checkbox" />
+          </label>
+        </section>
+
+        <div class="save-row">
+          <span id="save-status" role="status"></span>
+          <button class="primary" type="submit">Save</button>
+        </div>
+      </form>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>

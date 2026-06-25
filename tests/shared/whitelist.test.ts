@@ -27,10 +27,10 @@ describe("isWhitelisted", () => {
     );
   });
 
-  it("matches wildcard subdomains but not parent domain", () => {
+  it("matches wildcard subdomains and parent domain", () => {
     expect(isWhitelisted("https://api.github.com", ["*.github.com"])).toBe(
       true,
     );
-    expect(isWhitelisted("https://github.com", ["*.github.com"])).toBe(false);
+    expect(isWhitelisted("https://github.com", ["*.github.com"])).toBe(true);
   });
 });
