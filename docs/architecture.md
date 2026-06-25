@@ -29,9 +29,9 @@ A tab becomes eligible after its latest browser access or observed interaction e
 - restricted URLs and whitelist matches
 - playing media, including silent media observed in the page
 - forms that emitted edit events
-- pages with recent DOM activity
+- pages with recent same-origin resource activity
 
-Before removal, TinyTab fetches fresh tab state to avoid closing a tab activated during a scan.
+Before removal, TinyTab refreshes tab state, activity, and settings to narrow activation and pause races. Chromium does not provide an atomic “check then close” operation, so this protection remains best-effort.
 
 ## Build
 

@@ -5,6 +5,7 @@ export interface ScannerDependencies {
   listTabs: () => Promise<TabSnapshot[]>;
   getTab: (tabId: number) => Promise<TabSnapshot>;
   loadActivity: (tabId: number) => Promise<ActivitySnapshot | undefined>;
+  loadSettings: () => Promise<Settings>;
   removeTab: (tabId: number) => Promise<void>;
   onClosed: (tab: TabSnapshot) => Promise<void>;
 }
@@ -55,8 +56,17 @@ export async function scanTabs(
         continue;
       }
 
-      const currentTab = await dependencies.getTab(initialTab.id);
-      const finalDecision = decideTabClose(currentTab, activity, settings, now);
+      const [currentTab, latestActivity, latestSettings] = await Promise.all([
+        dependencies.getTab(initialTab.id),
+        dependencies.loadActivity(initialTab.id),
+        dependencies.loadSettings(),
+      ]);
+      const finalDecision = decideTabClose(
+        currentTab,
+        latestActivity ?? fallbackActivity(currentTab, now),
+        latestSettings,
+        Date.now(),
+      );
       if (!finalDecision.close) {
         continue;
       }

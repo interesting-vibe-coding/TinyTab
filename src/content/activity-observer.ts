@@ -5,6 +5,8 @@ export interface ActivityObserverOptions {
   now: () => number;
   send: (snapshot: ActivitySnapshot) => void;
   throttleMs?: number;
+  isUserEvent?: (event: Event) => boolean;
+  observePageActivity?: (report: () => void) => () => void;
 }
 
 export interface ActivityObserver {
@@ -16,8 +18,11 @@ export function createActivityObserver(
   options: ActivityObserverOptions,
 ): ActivityObserver {
   const throttleMs = options.throttleMs ?? 1_000;
+  const isUserEvent =
+    options.isUserEvent ?? ((event: Event): boolean => event.isTrusted);
   const playingMedia = new Set<EventTarget>();
   let lastSentAt = Number.NEGATIVE_INFINITY;
+  let trailingTimer: ReturnType<typeof setTimeout> | undefined;
   let snapshot: ActivitySnapshot = {
     lastInteractionAt: options.now(),
     lastPageActivityAt: 0,
@@ -26,27 +31,48 @@ export function createActivityObserver(
     observedAt: options.now(),
   };
 
-  const report = (updates: Partial<ActivitySnapshot>): void => {
+  const sendSnapshot = (): void => {
     const now = options.now();
-    snapshot = { ...snapshot, ...updates, observedAt: now };
-    if (now - lastSentAt >= throttleMs) {
-      lastSentAt = now;
-      options.send({ ...snapshot });
+    lastSentAt = now;
+    snapshot = { ...snapshot, observedAt: now };
+    options.send({ ...snapshot });
+  };
+
+  const report = (
+    updates: Partial<ActivitySnapshot>,
+    immediate = false,
+  ): void => {
+    snapshot = { ...snapshot, ...updates };
+    const elapsed = options.now() - lastSentAt;
+    if (immediate || elapsed >= throttleMs) {
+      if (trailingTimer !== undefined) {
+        clearTimeout(trailingTimer);
+        trailingTimer = undefined;
+      }
+      sendSnapshot();
+    } else if (trailingTimer === undefined) {
+      trailingTimer = setTimeout(() => {
+        trailingTimer = undefined;
+        sendSnapshot();
+      }, throttleMs - elapsed);
     }
   };
 
   const onInteraction = (event: Event): void => {
-    if ("isTrusted" in event && event.isTrusted === false && throttleMs > 0) {
+    if (!isUserEvent(event)) {
       return;
     }
-    report({
-      lastInteractionAt: options.now(),
-      dirtyForm:
-        snapshot.dirtyForm ||
-        event.type === "input" ||
-        event.type === "beforeinput" ||
-        event.type === "change",
-    });
+    const edited =
+      event.type === "input" ||
+      event.type === "beforeinput" ||
+      event.type === "change";
+    report(
+      {
+        lastInteractionAt: options.now(),
+        dirtyForm: snapshot.dirtyForm || edited,
+      },
+      edited,
+    );
   };
 
   const onMedia = (event: Event): void => {
@@ -55,7 +81,7 @@ export function createActivityObserver(
     } else if (event.target) {
       playingMedia.delete(event.target);
     }
-    report({ mediaPlaying: playingMedia.size > 0 });
+    report({ mediaPlaying: playingMedia.size > 0 }, true);
   };
 
   const interactionEvents = [
@@ -76,18 +102,19 @@ export function createActivityObserver(
     options.document.addEventListener(eventName, onMedia, true);
   }
 
-  const mutationObserver = new MutationObserver(() => {
-    report({ lastPageActivityAt: options.now() });
-  });
-  mutationObserver.observe(options.document.documentElement, {
-    childList: true,
-    subtree: true,
-    characterData: true,
-  });
+  const stopPageActivity =
+    options.observePageActivity?.(() => {
+      report({ lastPageActivityAt: options.now() });
+    }) ?? ((): void => undefined);
+
+  sendSnapshot();
 
   return {
     disconnect: (): void => {
-      mutationObserver.disconnect();
+      if (trailingTimer !== undefined) {
+        clearTimeout(trailingTimer);
+      }
+      stopPageActivity();
       for (const eventName of interactionEvents) {
         options.document.removeEventListener(eventName, onInteraction, true);
       }

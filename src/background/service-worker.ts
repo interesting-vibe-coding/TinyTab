@@ -52,6 +52,7 @@ async function runScan(): Promise<void> {
         return tab;
       },
       loadActivity,
+      loadSettings,
       removeTab: async (tabId): Promise<void> => chrome.tabs.remove(tabId),
       onClosed: async (): Promise<void> => {
         await recordClosedTab();
@@ -101,7 +102,11 @@ chrome.tabs.onCreated.addListener((tab) => {
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
-  if (changeInfo.url !== undefined || changeInfo.status === "complete") {
+  if (changeInfo.status === "loading") {
+    void touchActivity(tabId, Date.now(), true).catch((error: unknown) => {
+      logError("Could not reset tab activity", error);
+    });
+  } else if (changeInfo.url !== undefined || changeInfo.status === "complete") {
     void touchActivity(tabId, Date.now()).catch((error: unknown) => {
       logError("Could not record tab update", error);
     });

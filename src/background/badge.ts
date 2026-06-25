@@ -2,6 +2,7 @@ import { countForToday, incrementDailyCounter } from "./daily-counter";
 import type { DailyCounter } from "../shared/types";
 
 const COUNTER_KEY = "dailyCounter";
+let counterQueue: Promise<void> = Promise.resolve();
 
 async function loadCounter(): Promise<unknown> {
   const result = await chrome.storage.local.get(COUNTER_KEY);
@@ -15,10 +16,16 @@ export async function getClosedToday(): Promise<number> {
 
 /** Increments today's close count and refreshes toolbar badge. */
 export async function recordClosedTab(): Promise<DailyCounter> {
-  const counter = incrementDailyCounter(await loadCounter(), new Date());
-  await chrome.storage.local.set({ [COUNTER_KEY]: counter });
-  await refreshBadge(counter.count);
-  return counter;
+  let result: DailyCounter | undefined;
+  const update = async (): Promise<void> => {
+    result = incrementDailyCounter(await loadCounter(), new Date());
+    await chrome.storage.local.set({ [COUNTER_KEY]: result });
+    await refreshBadge(result.count);
+  };
+  counterQueue = counterQueue.then(update, update);
+  await counterQueue;
+  if (!result) throw new Error("Daily counter update failed.");
+  return result;
 }
 
 /** Refreshes toolbar badge using today's persisted count. */

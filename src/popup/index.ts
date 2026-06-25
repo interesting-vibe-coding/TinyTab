@@ -25,7 +25,8 @@ async function render(): Promise<void> {
   status.setAttribute("aria-label", settings.paused ? "Paused" : "Running");
 
   pauseButton.onclick = async (): Promise<void> => {
-    await saveSettings({ ...settings, paused: !settings.paused });
+    const latest = await loadSettings();
+    await saveSettings({ ...latest, paused: !latest.paused });
     await render();
   };
 }

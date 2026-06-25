@@ -40,6 +40,7 @@ function dependencies(
     listTabs: vi.fn(async () => [tab()]),
     getTab: vi.fn(async () => tab()),
     loadActivity: vi.fn(async () => activity()),
+    loadSettings: vi.fn(async () => DEFAULT_SETTINGS),
     removeTab: vi.fn(async () => undefined),
     onClosed: vi.fn(async () => undefined),
     ...overrides,
@@ -59,6 +60,36 @@ describe("scanTabs", () => {
   it("rechecks state and keeps a tab activated during the scan", async () => {
     const deps = dependencies({
       getTab: vi.fn(async () => tab({ active: true })),
+    });
+
+    const result = await scanTabs(deps, DEFAULT_SETTINGS, NOW);
+
+    expect(deps.removeTab).not.toHaveBeenCalled();
+    expect(result.closed).toBe(0);
+  });
+
+  it("rechecks activity before removal", async () => {
+    const loadActivity = vi
+      .fn<ScannerDependencies["loadActivity"]>()
+      .mockResolvedValueOnce(activity())
+      .mockResolvedValueOnce({
+        ...activity(),
+        mediaPlaying: true,
+      });
+    const deps = dependencies({ loadActivity });
+
+    const result = await scanTabs(deps, DEFAULT_SETTINGS, NOW);
+
+    expect(deps.removeTab).not.toHaveBeenCalled();
+    expect(result.closed).toBe(0);
+  });
+
+  it("honors pause enabled during a scan", async () => {
+    const deps = dependencies({
+      loadSettings: vi.fn(async () => ({
+        ...DEFAULT_SETTINGS,
+        paused: true,
+      })),
     });
 
     const result = await scanTabs(deps, DEFAULT_SETTINGS, NOW);

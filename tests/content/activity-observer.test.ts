@@ -3,11 +3,30 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { createActivityObserver } from "../../src/content/activity-observer";
 
 afterEach(() => {
+  vi.useRealTimers();
   document.body.replaceChildren();
   vi.restoreAllMocks();
 });
 
 describe("createActivityObserver", () => {
+  it("sends a clean initial snapshot", () => {
+    const send = vi.fn();
+    const observer = createActivityObserver({
+      document,
+      now: () => 500,
+      send,
+    });
+
+    expect(send).toHaveBeenCalledWith({
+      lastInteractionAt: 500,
+      lastPageActivityAt: 0,
+      mediaPlaying: false,
+      dirtyForm: false,
+      observedAt: 500,
+    });
+    observer.disconnect();
+  });
+
   it("reports trusted user interaction without reading input values", () => {
     const send = vi.fn();
     const input = document.createElement("input");
@@ -18,6 +37,7 @@ describe("createActivityObserver", () => {
       now: () => 1_000,
       send,
       throttleMs: 0,
+      isUserEvent: () => true,
     });
 
     input.dispatchEvent(new Event("input", { bubbles: true }));
@@ -42,6 +62,7 @@ describe("createActivityObserver", () => {
       now: () => 2_000,
       send,
       throttleMs: 0,
+      isUserEvent: () => true,
     });
 
     video.dispatchEvent(new Event("play", { bubbles: true }));
@@ -52,20 +73,51 @@ describe("createActivityObserver", () => {
     observer.disconnect();
   });
 
-  it("reports DOM changes as page activity", async () => {
+  it("reports observed same-origin resource activity", () => {
     const send = vi.fn();
+    let reportPageActivity = (): void => undefined;
     const observer = createActivityObserver({
       document,
       now: () => 3_000,
       send,
       throttleMs: 0,
+      observePageActivity: (report) => {
+        reportPageActivity = report;
+        return (): void => undefined;
+      },
     });
 
-    document.body.append(document.createElement("div"));
-    await Promise.resolve();
+    reportPageActivity();
 
     expect(send).toHaveBeenLastCalledWith(
       expect.objectContaining({ lastPageActivityAt: 3_000 }),
+    );
+    observer.disconnect();
+  });
+
+  it("flushes trailing interaction after throttle window", () => {
+    vi.useFakeTimers();
+    let now = 1_000;
+    const send = vi.fn();
+    const observer = createActivityObserver({
+      document,
+      now: () => now,
+      send,
+      throttleMs: 1_000,
+      isUserEvent: () => true,
+    });
+    send.mockClear();
+
+    document.dispatchEvent(new Event("scroll"));
+    now = 1_500;
+    document.dispatchEvent(new Event("scroll"));
+    expect(send).not.toHaveBeenCalled();
+
+    now = 2_000;
+    vi.advanceTimersByTime(1_000);
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenLastCalledWith(
+      expect.objectContaining({ lastInteractionAt: 1_500, observedAt: 2_000 }),
     );
     observer.disconnect();
   });

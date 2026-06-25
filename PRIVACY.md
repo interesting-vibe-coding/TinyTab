@@ -7,7 +7,7 @@ TinyTab processes browser state locally to decide whether a tab is idle. It does
 ## Data processed locally
 
 - Tab URL, active state, pinned state, loading state, audible state, and Chromium `lastAccessed` timestamp.
-- Coarse timestamps for user interaction and page changes.
+- Coarse timestamps for user interaction and same-origin resource activity.
 - Boolean media-playing and edited-form signals.
 - User settings, whitelist entries, and daily closed-tab count.
 

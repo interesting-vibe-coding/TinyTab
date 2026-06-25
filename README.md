@@ -50,7 +50,7 @@ alarm → scan tabs → evaluate safeguards → recheck live state → close
 
 - **One alarm:** scans once per minute; never creates one timer per tab.
 - **Deterministic policy:** pure decision logic returns one explicit keep/close reason.
-- **Smart Close:** combines Chromium `lastAccessed` with coarse interaction, media, form-edit, and page-activity signals.
+- **Smart Close:** combines Chromium `lastAccessed` with coarse interaction, media, form-edit, and same-origin resource-activity signals.
 - **Private by design:** no analytics, remote requests, page text, form values, request bodies, or browsing-history export.
 
 See [architecture](docs/architecture.md) and [privacy policy](PRIVACY.md).
