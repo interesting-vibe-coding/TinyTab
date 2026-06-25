@@ -12,8 +12,9 @@ Updated: June 26, 2026.
 - GitHub Actions CI passing.
 - Atlas unpacked-extension smoke test passed: service worker startup, popup/options rendering, settings persistence, background idle-tab close, active-tab protection, and daily badge increment.
 - Chrome Web Store package, listing copy, permission justifications, privacy disclosure, screenshot, and promotional tile prepared.
+- Chrome Web Store version 0.1.0 submitted for review. Item ID: `knlmofeceppakkmacpfjpkklhckfkpmb`.
 
 ## Next
 
-- Upload and submit version 0.1.0 after developer-account sign-in.
+- Monitor Chrome Web Store review and address only actionable reviewer feedback.
 - Add reversible recent-close history in a later release.
