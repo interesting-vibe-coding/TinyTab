@@ -10,9 +10,9 @@ Updated: June 25, 2026.
 - `npm run verify`: 60 tests, lint, strict typecheck, build.
 - Coverage: 87.37% statements, 83.01% branches.
 - GitHub Actions CI passing.
+- Atlas unpacked-extension smoke test passed: service worker startup, popup/options rendering, settings persistence, background idle-tab close, active-tab protection, and daily badge increment.
 
 ## Next
 
-- Load unpacked in Atlas manually and field-test real tab-closing behavior.
 - Add reversible recent-close history before Chrome Web Store submission.
 - Prepare store screenshots, permission justification, and listing copy.
