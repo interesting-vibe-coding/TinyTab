@@ -37,7 +37,24 @@ export async function saveActivity(
   snapshot: ActivitySnapshot,
 ): Promise<void> {
   await enqueueActivity(tabId, async () => {
-    await chrome.storage.session.set({ [activityKey(tabId)]: snapshot });
+    const key = activityKey(tabId);
+    const stored = (await chrome.storage.session.get(key))[key] as
+      | ActivitySnapshot
+      | undefined;
+    await chrome.storage.session.set({
+      [key]: {
+        ...snapshot,
+        lastInteractionAt: Math.max(
+          snapshot.lastInteractionAt,
+          stored?.lastInteractionAt ?? 0,
+        ),
+        lastPageActivityAt: Math.max(
+          snapshot.lastPageActivityAt,
+          stored?.lastPageActivityAt ?? 0,
+        ),
+        observedAt: Math.max(snapshot.observedAt, stored?.observedAt ?? 0),
+      } satisfies ActivitySnapshot,
+    });
   });
 }
 

@@ -7,6 +7,7 @@ import {
 import { recordClosedTab, refreshBadge } from "./badge";
 import { scanTabs } from "./scanner";
 import { loadSettings } from "./settings-store";
+import { recordWindowFocus } from "./window-focus";
 import { isActivityMessage } from "../shared/messages";
 import { logError } from "../shared/logger";
 import type { TabSnapshot } from "../shared/types";
@@ -90,6 +91,18 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 chrome.tabs.onActivated.addListener(({ tabId }) => {
   void touchActivity(tabId, Date.now()).catch((error: unknown) => {
     logError("Could not record tab activation", error);
+  });
+});
+
+chrome.windows.onFocusChanged.addListener((windowId) => {
+  void recordWindowFocus(windowId, chrome.windows.WINDOW_ID_NONE, {
+    findActiveTabId: async (focusedWindowId): Promise<number | undefined> =>
+      (await chrome.tabs.query({ active: true, windowId: focusedWindowId }))[0]
+        ?.id,
+    now: Date.now,
+    touch: touchActivity,
+  }).catch((error: unknown) => {
+    logError("Could not record window focus", error);
   });
 });
 

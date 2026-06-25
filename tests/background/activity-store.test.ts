@@ -71,4 +71,27 @@ describe("activity store", () => {
       }),
     );
   });
+
+  it("does not let a stale content snapshot erase newer browser interaction", async () => {
+    const { loadActivity, saveActivity, touchActivity } =
+      await import("../../src/background/activity-store");
+    await touchActivity(1, 500);
+
+    await saveActivity(
+      1,
+      snapshot({
+        lastInteractionAt: 100,
+        lastPageActivityAt: 200,
+        observedAt: 300,
+      }),
+    );
+
+    expect(await loadActivity(1)).toEqual(
+      snapshot({
+        lastInteractionAt: 500,
+        lastPageActivityAt: 200,
+        observedAt: 500,
+      }),
+    );
+  });
 });

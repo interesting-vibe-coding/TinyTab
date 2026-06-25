@@ -6,9 +6,9 @@ Updated: June 25, 2026.
 
 - Public MVP shipped at <https://github.com/interesting-vibe-coding/TinyTab>.
 - Atlas-first Manifest V3 architecture, static popup/options UI, Smart Close, whitelist, pause, daily badge.
-- Adversarial self-review fixes applied for activity races, navigation state, throttling, counter concurrency, and stale pause/settings reads.
-- `npm run verify`: 60 tests, lint, strict typecheck, build.
-- Coverage: 87.37% statements, 83.01% branches.
+- Adversarial self-review fixes applied for activity races, navigation state, window-focus tracking, throttling, counter concurrency, and stale pause/settings reads.
+- `npm run verify`: 63 tests, lint, strict typecheck, build.
+- Coverage: 87.79% statements, 85.20% branches.
 - GitHub Actions CI passing.
 - Atlas unpacked-extension smoke test passed: service worker startup, popup/options rendering, settings persistence, background idle-tab close, active-tab protection, and daily badge increment.
 
