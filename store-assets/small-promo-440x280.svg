@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="280" viewBox="0 0 440 280">
+  <rect width="440" height="280" rx="20" fill="#15191E"/>
+  <g fill="none" stroke="#D8DEE5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M298 90h38l12 12h45v52h-75"/>
+    <path d="M280 116h38l12 12h45v52h-75"/>
+    <path d="M262 142h38l12 12h45v52h-95z"/>
+  </g>
+  <path d="M269 149h27l9 9h45" fill="none" stroke="#6F8FAF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="42" y="112" fill="#F3F5F7" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="38" font-weight="650">TinyTab</text>
+  <text x="42" y="150" fill="#AAB3BD" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="16">Quiet tab cleanup.</text>
+  <text x="42" y="176" fill="#AAB3BD" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="16">Nothing else.</text>
+</svg>

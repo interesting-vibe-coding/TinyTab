@@ -1,6 +1,6 @@
 # Project Status
 
-Updated: June 25, 2026.
+Updated: June 26, 2026.
 
 ## Current
 
@@ -11,8 +11,9 @@ Updated: June 25, 2026.
 - Coverage: 87.79% statements, 85.20% branches.
 - GitHub Actions CI passing.
 - Atlas unpacked-extension smoke test passed: service worker startup, popup/options rendering, settings persistence, background idle-tab close, active-tab protection, and daily badge increment.
+- Chrome Web Store package, listing copy, permission justifications, privacy disclosure, screenshot, and promotional tile prepared.
 
 ## Next
 
-- Add reversible recent-close history before Chrome Web Store submission.
-- Prepare store screenshots, permission justification, and listing copy.
+- Upload and submit version 0.1.0 after developer-account sign-in.
+- Add reversible recent-close history in a later release.
